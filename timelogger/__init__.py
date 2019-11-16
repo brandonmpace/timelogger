@@ -26,3 +26,8 @@ __maintainer__ = "Brandon M. Pace"
 __status__ = "Development"
 __version__ = "0.0.1"
 
+import logging
+
+from .timer import set_log_level, start, stop
+
+logger = logging.getLogger(__name__)
