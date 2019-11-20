@@ -63,13 +63,13 @@ def stop(name: str):
     """
     current_time = time.time()
     with _timer_lock:
-        start_time = _start_times.get(name)
-        if start_time:
-            _log_time(name, current_time - start_time)
-        else:
+        start_time = _start_times.pop(name, None)
+        if start_time is None:
             msg = f"No time record for '{name}'"
             logger.error(msg)
             raise ValueError(msg)
+        else:
+            _log_time(name, current_time - start_time)
 
 
 def _log_time(name: str, time_difference: float):
