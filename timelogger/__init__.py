@@ -28,6 +28,6 @@ __version__ = "0.0.2"
 
 import logging
 
-from .timer import set_log_level, start, stop
+from .timer import set_log_level, set_time_function, start, stop
 
 logger = logging.getLogger(__name__)
