@@ -23,11 +23,15 @@ import logging
 import threading
 import time
 
+from typing import Callable
+
 logger = logging.getLogger(__name__)
 
 _log_level = logging.INFO
 _start_times = {}
 _timer_lock = threading.RLock()
+_time_func = time.perf_counter
+_time_unit = "seconds"
 
 
 def set_log_level(new_level: int):
@@ -39,13 +43,28 @@ def set_log_level(new_level: int):
         raise TypeError(f"Expected int, got {type(new_level)} - hint: use built-ins, such as logging.INFO")
 
 
+def set_time_function(func: Callable, unit: str = _time_unit):
+    """
+    Set a new function to be used for time tracking
+    :param func: A callable that requires no arguments and returns a float reference time
+    :param unit: str unit of measurement (e.g. "seconds")
+    """
+    global _time_func
+    global _time_unit
+    if callable(func):
+        _time_func = func
+        _time_unit = unit
+    else:
+        raise TypeError("New time function must be callable")
+
+
 def start(name: str):
     """
     Record a start time for a given name. If it already exists, the time difference is logged and the new time is set.
     :param name: str identifier to use for tracking and logging this timer
     :return: None
     """
-    current_time = time.time()
+    current_time = _time_func()
     with _timer_lock:
         existing_start_time = _start_times.get(name)
         if existing_start_time:
@@ -62,7 +81,7 @@ def stop(name: str):
     :raises: ValueError when no start time is found for the provided name
     :return: None
     """
-    current_time = time.time()
+    current_time = _time_func()
     with _timer_lock:
         start_time = _start_times.pop(name, None)
         if start_time is None:
@@ -74,4 +93,4 @@ def stop(name: str):
 
 
 def _log_time(name: str, time_difference: float):
-    logger.log(_log_level, f"'{name}' completed in {time_difference} seconds")
+    logger.log(_log_level, f"'{name}' completed in {time_difference} {_time_unit}")
