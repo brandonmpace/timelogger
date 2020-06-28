@@ -68,7 +68,9 @@ def start(name: str):
     with _timer_lock:
         existing_start_time = _start_times.get(name)
         if existing_start_time:
-            logger.debug(f"Existing start time detected for '{name}', will replace it after logging current difference")
+            logger.warning(
+                f"Existing start time detected for '{name}', will replace it after logging current difference"
+            )
             _log_time(name, current_time - existing_start_time)
         _start_times[name] = current_time
         logger.debug(f"Start time recorded for '{name}'")
