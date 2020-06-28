@@ -37,6 +37,7 @@ Usage:
         import decimal
         import hashlib
         import requests
+        import threading
 
         # To log the time differential, set a stop time for the same name
         timelogger.stop("imports")
@@ -44,4 +45,8 @@ Usage:
         # To set a specific log level for the time differential logs: (default is logging.INFO)
         timelogger.set_log_level(logcontrol.DEBUG)
 
+        # To create unique names per-thread, I recommend using thread id:
+        timer_name = f"mytimer-{threading.current_thread().ident}"
+        timelogger.start(timer_name)
+        ...
 

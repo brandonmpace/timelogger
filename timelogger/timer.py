@@ -23,12 +23,12 @@ import logging
 import threading
 import time
 
-from typing import Callable
+from typing import Callable, Dict
 
 logger = logging.getLogger(__name__)
 
 _log_level = logging.INFO
-_start_times = {}
+_start_times: Dict[str, float] = {}
 _timer_lock = threading.RLock()
 _time_func = time.perf_counter
 _time_unit = "seconds"
@@ -49,8 +49,7 @@ def set_time_function(func: Callable, unit: str = _time_unit):
     :param func: A callable that requires no arguments and returns a float reference time
     :param unit: str unit of measurement (e.g. "seconds")
     """
-    global _time_func
-    global _time_unit
+    global _time_func, _time_unit
     if callable(func):
         _time_func = func
         _time_unit = unit
